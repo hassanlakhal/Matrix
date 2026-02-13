@@ -10,22 +10,44 @@ struct Vector<K> {
 //     cols: usize,
 // }
 
-impl<K: std::fmt::Debug> Vector<K>{
+use std::ops::Add;
 
-    fn size(&self) -> usize{
+impl<K: Add<Output = K> + Copy + std::fmt::Debug> Vector<K> {
+    fn from<T: Into<Vec<K>>>(values: T) -> Self {
+        Vector { data: values.into() }
+    }
+
+    fn size(&self) -> usize {
         self.data.len()
     }
 
-    fn print(&self){
-        println!("{:?}",self.data);
+    fn print(&self) {
+        println!("{:?}", self.data);
     }
-}
 
+    fn add(&mut self, v: &Vector<K>) {
+        if self.size() != v.size() {
+            eprintln!("Error: Vectors must have the same size");
+            return;
+        }
+        for i in 0..self.data.len() {
+            self.data[i] = self.data[i] + v.data[i];
+        }
+    }
+
+    // fn sub...
+    // fn scl...
+}
 
 fn main() {
+    let mut u = Vector::from([2., 3.]);
+    let v = Vector::from([5., 7.]);
 
-    let v = Vector { data: vec![1.0,2.0,3.0,4.0,5.0,6.0] };
-    v.print();
-    println!("Vector size: {}", v.size());
+    println!("Before add:");
+    u.print();  
+
+    u.add(&v);
+
+    println!("After add:");
+    u.print();
 }
-
