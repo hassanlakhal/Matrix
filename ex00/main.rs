@@ -11,14 +11,14 @@ struct Vector<K> {
 // }
 
 use std::{
-    ops::{Add, Sub},
+    ops::{Add, Sub, Mul},
     fmt::Debug,
 };
 
 
 impl<K> Vector<K> 
 where
-    K: Add<Output = K> + Sub<Output = K> + Copy + Debug,
+    K: Add<Output = K> + Sub<Output = K> + Mul<Output = K> + Copy + Debug,
 {
         fn from<T: Into<Vec<K>>>(values: T) -> Self {
             Vector { data: values.into() }
@@ -51,12 +51,16 @@ where
                 self.data[i] = self.data[i] - v.data[i];
             }
         }
-    // fn scl...
+        fn scl(&mut self, a: K){
+            for i in 0..self.data.len(){
+                self.data[i] = self.data[i] * a;
+            }
+        }
 }
 
 fn main() {
-    let mut u = Vector::from([2., 3.]);
-    let v = Vector::from([5., 7.]);
+    let mut u = Vector::from([2., 3., 5.]);
+    let v = Vector::from([5., 7., -100.]);
     let mut j = Vector::from([8., 9.]);
 
     println!("Before add:");
@@ -70,5 +74,7 @@ fn main() {
 
     j.sub(&v);
     println!("After sub:");
+    j.print();
+    j.scl(5.);
     j.print();
 }
