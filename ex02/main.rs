@@ -161,8 +161,8 @@ fn lerp<V: Lerpable>(u: V, v: V, t: f32) -> V {
 
 
 fn main() {
-    println!("{}", lerp(0.0, 1.0, 0.0));
-    println!("{}", lerp(0.0, 1.0, 1.0));
+    println!("{:?}", lerp(0.0, 1.0, 0.0));
+    println!("{:?}", lerp(0.0, 1.0, 1.0));
 
     let v1 = Vector::from(vec![1.0, 2.0]);
     let v2 = Vector::from(vec![3.0, 4.0]);
