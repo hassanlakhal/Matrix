@@ -111,7 +111,7 @@ where V: Lerpable<T>
 }
 
 fn main() {
-    println!("Float lerp: {:?}", lerp(100f32, 450f32, 0.5f32));
+    println!("Float lerp: {:?}", lerp(100f32, 4f32, 0.5f32));
 
     let v1 = Vector::from(vec![1, 2]);
     let v2 = Vector::from(vec![3, 4]);
