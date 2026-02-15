@@ -107,6 +107,26 @@ where
     }
 }
 
+impl<K> Lerpable for Vector<K>
+where
+    K : Add<Output = K> + Sub<Output = K> + Mul<f32, Output = K> + Copy + Debug
+{
+    fn lerp(u: &Vector<K>, v: &Vector<K>, t :f32) -> Vector<K>{
+        let mut res  = v.clone();
+        res
+    }
+}
+
+impl<K> Lerpable for K
+where 
+    K : Add<Output = K> + Sub<Output = K> + Mul<f32, Output = K> + Copy + Debug,
+{
+    fn lerp(u: &K, v: &K, t :f32) -> K{
+        *u + (*v - *u) * t
+    }
+}
+
+
 fn lerp<V: Lerpable>(u:V , v:V, t: f32) -> V{
     V::lerp(&u, &v,t)
 }
@@ -116,6 +136,9 @@ fn main() {
     let m2 = Matrix::from(vec![vec![20., 10.], vec![30., 40.]]);
 
     let mid = lerp(m1, m2, 0.5);
-
+    println!("{}", lerp(0., 1., 0.));
+    // 0.0
+    println!("{}", lerp(0., 1., 1.));
+    // 1.0
     println!("{:?}", mid);
 }
