@@ -1,4 +1,5 @@
-use std::ops::{AddAssign, SubAssign, MulAssign, Mul, Add};
+use std::ops::{AddAssign, SubAssign, MulAssign, Mul, Add, Neg};
+use std::cmp::{PartialOrd};
 
 #[derive(Debug, Clone)]
 struct Vector<K> {
@@ -14,7 +15,7 @@ impl<K> Vector<K> {
 
 
 impl<K> Vector<K> 
-where K: Copy + AddAssign + SubAssign + MulAssign 
+where K: Copy + AddAssign + SubAssign + MulAssign + PartialOrd
 {
     pub fn from(values: Vec<K>) -> Self {
         Self { data: values }
@@ -22,13 +23,14 @@ where K: Copy + AddAssign + SubAssign + MulAssign
 
     fn norm_1(&mut self) -> K
     where 
-        K : Add<Output = K> + Mul<Output = K> + Default 
+        K : Add<Output = K> + Mul<Output = K> + Neg<Output = K> + Default 
     {
         let mut res = K::default();
+        let abs = K::default();
         let mut vec = self.data.clone();
-        for i in 0..vec.len(){
-            if vec[i] < 0.{
-                vec[i] = vec[i] * -1.;
+        for i in 0..self.size(){
+            if vec[i] < abs{
+                vec[i] = -vec[i];
             }
             res += vec[i];
         }
@@ -48,10 +50,12 @@ fn main() {
     println!("{:?}",u.norm_1());
     // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
     // // 0.0, 0.0, 0.0
-    // let u = Vector::from(vec![1., 2., 3.]);
+    let mut u = Vector::from(vec![1., 2., 3.]);
     // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    println!("{:?}", u.norm_1());
     // // 6.0, 3.74165738, 3.0
-    // let u = Vector::from(vec![-1., -2.]);
+    let mut u = Vector::from(vec![-1., -2.]);
+    println!("{:?}", u.norm_1());
     // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
     // 3.0, 2.236067977, 2.0
 }
