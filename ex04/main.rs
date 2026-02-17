@@ -1,5 +1,5 @@
 use std::ops::{AddAssign, SubAssign, MulAssign, Mul, Add, Neg};
-use std::cmp::{PartialOrd};
+use std::cmp::{PartialOrd , Ord};
 
 #[derive(Debug, Clone)]
 struct Vector<K> {
@@ -16,7 +16,8 @@ impl<K> Vector<K> {
 trait MathOps{
     fn mul_add(self, a: Self, b: Self) -> Self;
     fn pow(self, exp: u32) -> Self;
-    fn max(self, other: Self) -> Self; 
+    fn powf(self, exp: f32) -> Self;
+    fn max(self) -> Self; 
 }
 
 impl MathOps for f32 {
@@ -28,8 +29,12 @@ impl MathOps for f32 {
         f32::powf(self, exp as f32) as f32
     }
 
-    fn max(self, other: Self) -> Self {
-        f32::max(self, other)
+    fn powf(self, exp: f32) -> Self {
+        f32::powf(self, exp as f32) as f32
+    }
+
+    fn max(self) -> Self {
+        self.into_iter().max()
     }
 }
 
@@ -66,26 +71,39 @@ where K: Copy + AddAssign + SubAssign + MulAssign + PartialOrd
             
             res = res + vec[i].pow(2);
         }
-        res = res.pow(1.5);
+        res = res.powf(0.5);
         res
     }
-    // fn norm_inf(&mut self) -> K{
-
-    // }
+    fn norm_inf(&mut self) -> K
+    where 
+        K : Add<Output = K> + Mul<Output = K> + Neg<Output = K> + MathOps + Default 
+    {
+        let mut vec = self.data.clone();
+        let mut res = K::default();
+        let abs = K::default();
+        for i in 0..self.size(){
+            if vec[i] < abs {
+                vec[i] = -vec[i];
+            }
+            // res = vec[i].max(vec[i + 1]);
+        }
+        vec.into_iter().max();
+        res
+    }
 }
 
 
 fn main() {
     let mut u = Vector::from(vec![0., 0., 0.]);
-    println!("{:?}",u.norm());
-    // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    // println!("{:?}",u.norm());
+    println!("{:?}, {:?}, {:?}", u.norm_1(), u.norm(), u.norm_inf());
     // // 0.0, 0.0, 0.0
     let mut u = Vector::from(vec![1., 2., 3.]);
-    // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
-    println!("{:?}", u.norm());
+    println!("{:?}, {:?}, {:?}", u.norm_1(), u.norm(), u.norm_inf());
+    // println!("{:?}", u.norm());
     // // 6.0, 3.74165738, 3.0
     let mut u = Vector::from(vec![-1., -2.]);
-    println!("{:?}", u.norm());
-    // println!("{}, {}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    // println!("{:?}", u.norm());
+    println!("{:?}, {:?}, {:?}", u.norm_1(), u.norm(), u.norm_inf());
     // 3.0, 2.236067977, 2.0
 }
