@@ -1,81 +1,83 @@
 use std::fmt;
-use std::ops::{AddAssign, SubAssign, MulAssign};
+use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign};
 
+pub trait KField: 
+    Copy + Default + PartialEq + fmt::Display +
+    Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> +
+    AddAssign + SubAssign + MulAssign + DivAssign 
+{}
+
+impl KField for f32 {}
 
 #[derive(Debug, Clone)]
-struct Vector<K> {
-    data: Vec<K>,
-}
+pub struct Vector<K> { pub data: Vec<K> }
 
 #[derive(Debug, Clone)]
-struct Matrix<K> {
-    data: Vec<Vec<K>>, // Column-major storage
-    rows: usize,
-    cols: usize,
+pub struct Matrix<K> {
+    pub data: Vec<K>, 
+    pub rows: usize,
+    pub cols: usize,
 }
 
-
-impl<K: Copy + AddAssign + SubAssign + MulAssign> Vector<K> {
-    fn from<const N: usize>(arr: [K; N]) -> Self {
+impl<K: KField> Vector<K> {
+    pub fn from<const N: usize>(arr: [K; N]) -> Self {
         Self { data: arr.to_vec() }
     }
+}
 
-    fn add(&mut self, v: &Vector<K>) {
+impl<K: KField> Matrix<K> {
+    pub fn from<const R: usize, const C: usize>(arr: [[K; C]; R]) -> Self {
+        let mut data = Vec::with_capacity(R * C);
+        for c in 0..C {
+            for r in 0..R {
+                data.push(arr[r][c]);
+            }
+        }
+        Self { data, rows: R, cols: C }
+    }
+}
+
+impl<K: KField> Vector<K> {
+    pub fn add(&mut self, v: &Vector<K>) {
         for i in 0..self.data.len() { self.data[i] += v.data[i]; }
     }
-    fn sub(&mut self, v: &Vector<K>) {
+    pub fn sub(&mut self, v: &Vector<K>) {
         for i in 0..self.data.len() { self.data[i] -= v.data[i]; }
     }
-    fn scl(&mut self, a: K) {
-        for x in self.data.iter_mut() { *x *= a; }
+    pub fn scl(&mut self, a: K) {
+        for val in &mut self.data { *val *= a; }
     }
 }
 
-impl<K: Copy + AddAssign + SubAssign + MulAssign> Matrix<K> {
-    fn from<const R: usize, const C: usize>(arr: [[K; C]; R]) -> Self {
-        let mut cols_data = vec![vec![arr[0][0]; R]; C];
-        for r in 0..R {
-            for c in 0..C { cols_data[c][r] = arr[r][c]; }
-        }
-        Matrix { data: cols_data, rows: R, cols: C }
+impl<K: KField> Matrix<K> {
+    pub fn add(&mut self, v: &Matrix<K>) {
+        for i in 0..self.data.len() { self.data[i] += v.data[i]; }
     }
-
-    fn add(&mut self, v: &Matrix<K>) {
-        for c in 0..self.cols {
-            for r in 0..self.rows { self.data[c][r] += v.data[c][r]; }
-        }
+    pub fn sub(&mut self, v: &Matrix<K>) {
+        for i in 0..self.data.len() { self.data[i] -= v.data[i]; }
     }
-    fn sub(&mut self, v: &Matrix<K>) {
-        for c in 0..self.cols {
-            for r in 0..self.rows { self.data[c][r] -= v.data[c][r]; }
-        }
-    }
-    fn scl(&mut self, a: K) {
-        for col in self.data.iter_mut() {
-            for val in col.iter_mut() { *val *= a; }
-        }
+    pub fn scl(&mut self, a: K) {
+        for val in &mut self.data { *val *= a; }
     }
 }
 
 
-trait Lerpable<K> {
-    fn lerp(u: Self, v: Self, t: K) -> Self;
+pub trait Lerp {
+    fn lerp(u: Self, v: Self, t: f32) -> Self;
 }
 
-fn lerp<T, K>(u: T, v: T, t: K) -> T 
-where T: Lerpable<K> 
-{
-    T::lerp(u, v, t)
+pub fn lerp<V: Lerp>(u: V, v: V, t: f32) -> V {
+    V::lerp(u, v, t)
 }
 
-impl Lerpable<f32> for f32 {
+impl Lerp for f32 {
     fn lerp(u: f32, v: f32, t: f32) -> f32 {
         u + (v - u) * t
     }
 }
 
-impl<K: Copy + AddAssign + SubAssign + MulAssign> Lerpable<K> for Vector<K> {
-    fn lerp(u: Self, v: Self, t: K) -> Self {
+impl Lerp for Vector<f32> {
+    fn lerp(u: Self, v: Self, t: f32) -> Self {
         let mut res = v.clone();
         res.sub(&u);
         res.scl(t);
@@ -84,8 +86,8 @@ impl<K: Copy + AddAssign + SubAssign + MulAssign> Lerpable<K> for Vector<K> {
     }
 }
 
-impl<K: Copy + AddAssign + SubAssign + MulAssign> Lerpable<K> for Matrix<K> {
-    fn lerp(u: Self, v: Self, t: K) -> Self {
+impl Lerp for Matrix<f32> {
+    fn lerp(u: Self, v: Self, t: f32) -> Self {
         let mut res = v.clone();
         res.sub(&u);
         res.scl(t);
@@ -93,44 +95,38 @@ impl<K: Copy + AddAssign + SubAssign + MulAssign> Lerpable<K> for Matrix<K> {
         res
     }
 }
-
 
 impl<K: fmt::Display> fmt::Display for Vector<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (i, val) in self.data.iter().enumerate() {
-            write!(f, "[{}]", val)?;
-            if i < self.data.len() - 1 { writeln!(f)?; }
-        }
+        for val in &self.data { writeln!(f, "[{:.1}]", val)?; }
         Ok(())
     }
 }
 
 impl<K: fmt::Display + Copy> fmt::Display for Matrix<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "[")?;
         for r in 0..self.rows {
-            if r > 0 { write!(f, " ")?; }
             write!(f, "[")?;
             for c in 0..self.cols {
-                write!(f, "{}", self.data[c][r])?;
-                if c < self.cols - 1 { write!(f, ", ")?; }
+                write!(f, "{:.1}{}", self.data[c * self.rows + r], if c == self.cols - 1 { "" } else { ", " })?;
             }
-            write!(f, "]")?;
-            if r < self.rows - 1 { writeln!(f)?; }
+            writeln!(f, "]")?;
         }
-        write!(f, "]")
+        Ok(())
     }
 }
 
-
 fn main() {
+    // Test Scalars
     println!("{}", lerp(0., 1., 0.));
     println!("{}", lerp(0., 1., 1.));
     println!("{}", lerp(0., 1., 0.5));
     println!("{:.1}", lerp(21., 42., 0.3));
 
+    // Test Vector
     println!("{}", lerp(Vector::from([2., 1.]), Vector::from([4., 2.]), 0.3));
 
+    // Test Matrix
     println!("{}", lerp(
         Matrix::from([[2., 1.], [3., 4.]]), 
         Matrix::from([[20., 10.], [30., 40.]]), 
