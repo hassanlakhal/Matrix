@@ -1,144 +1,104 @@
-use std::ops::{AddAssign, SubAssign, MulAssign};
+use std::fmt;
+use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign};
 
-#[derive(Debug, Clone)]
-struct Vector<K> {
-    data: Vec<K>,
+pub trait KField: 
+    Copy + Default + PartialEq + fmt::Display +
+    Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> +
+    AddAssign + SubAssign + MulAssign + DivAssign 
+{}
+
+impl KField for f32 {}
+
+pub struct Vector<K> { pub data: Vec<K> }
+
+pub struct Matrix<K> {
+    pub data: Vec<K>, // Column-Major
+    pub rows: usize,
+    pub cols: usize,
 }
 
-#[derive(Debug, Clone)]
-struct Matrix<K> {
-    data: Vec<K>,   // Row-major storage
-    rows: usize,
-    cols: usize,
-}
-
-
-impl<K> Vector<K> {
-    pub fn size(&self) -> usize {
-        self.data.len()
-    }
-}
-
-impl<K> Vector<K>
-where
-    K: Copy + AddAssign + SubAssign + MulAssign,
-{
-    pub fn from(values: Vec<K>) -> Self {
-        Self { data: values }
-    }
-
-    pub fn add(&mut self, v: &Vector<K>) {
-        assert!(self.size() == v.size(), "Vector dimensions must match");
-        for i in 0..self.size() {
-            self.data[i] += v.data[i];
-        }
-    }
-
-    pub fn sub(&mut self, v: &Vector<K>) {
-        assert!(self.size() == v.size(), "Vector dimensions must match");
-        for i in 0..self.size() {
-            self.data[i] -= v.data[i];
-        }
-    }
-
-    pub fn scl(&mut self, a: K) {
-        for val in &mut self.data {
-            *val *= a;
-        }
+impl<K: KField> Vector<K> {
+    pub fn from<const N: usize>(arr: [K; N]) -> Self {
+        Self { data: arr.to_vec() }
     }
 }
 
-
-
-impl<K> Matrix<K> {
-    pub fn shape(&self) -> (usize, usize) {
-        (self.rows, self.cols)
-    }
-
-    pub fn size(&self) -> usize {
-        self.data.len()
-    }
-
-    pub fn is_square(&self) -> bool {
-        self.rows == self.cols
-    }
-
-    // Row-major index helper
-    fn index(&self, row: usize, col: usize) -> usize {
-        row * self.cols + col
-    }
-}
-
-impl<K> Matrix<K>
-where
-    K: Copy + AddAssign + SubAssign + MulAssign,
-{
-    pub fn from(values: Vec<Vec<K>>) -> Self {
-        let rows = values.len();
-        let cols = if rows > 0 { values[0].len() } else { 0 };
-
-        let mut data = Vec::with_capacity(rows * cols);
-
-        for row in &values {
-            assert!(row.len() == cols, "All rows must have same length");
-            for val in row {
-                data.push(*val);
+impl<K: KField> Matrix<K> {
+    pub fn from<const R: usize, const C: usize>(arr: [[K; C]; R]) -> Self {
+        let mut data = Vec::with_capacity(R * C);
+        for c in 0..C {
+            for r in 0..R {
+                data.push(arr[r][c]);
             }
         }
-
-        Self { data, rows, cols }
-    }
-
-    pub fn add(&mut self, m: &Matrix<K>) {
-        assert!(self.shape() == m.shape(), "Matrix dimensions must match");
-        for i in 0..self.size() {
-            self.data[i] += m.data[i];
-        }
-    }
-
-    pub fn sub(&mut self, m: &Matrix<K>) {
-        assert!(self.shape() == m.shape(), "Matrix dimensions must match");
-        for i in 0..self.size() {
-            self.data[i] -= m.data[i];
-        }
-    }
-
-    pub fn scl(&mut self, a: K) {
-        for val in &mut self.data {
-            *val *= a;
-        }
+        Self { data, rows: R, cols: C }
     }
 }
 
+impl<K: fmt::Display> fmt::Display for Vector<K> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for val in &self.data {
+            writeln!(f, "[{:.1}]", val)?;
+        }
+        Ok(())
+    }
+}
+
+impl<K: fmt::Display + Copy> fmt::Display for Matrix<K> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for r in 0..self.rows {
+            write!(f, "[")?;
+            for c in 0..self.cols {
+                write!(f, "{:.1}{}", self.data[c * self.rows + r], if c == self.cols - 1 { "" } else { ", " })?;
+            }
+            writeln!(f, "]")?;
+        }
+        Ok(())
+    }
+}
+
+impl<K: KField> Vector<K> {
+    pub fn add(&mut self, v: &Vector<K>) {
+        for i in 0..self.data.len() { self.data[i] += v.data[i]; }
+    }
+    pub fn sub(&mut self, v: &Vector<K>) {
+        for i in 0..self.data.len() { self.data[i] -= v.data[i]; }
+    }
+    pub fn scl(&mut self, a: K) {
+        for val in &mut self.data { *val *= a; }
+    }
+}
+
+impl<K: KField> Matrix<K> {
+    pub fn add(&mut self, v: &Matrix<K>) {
+        for i in 0..self.data.len() { self.data[i] += v.data[i]; }
+    }
+    pub fn sub(&mut self, v: &Matrix<K>) {
+        for i in 0..self.data.len() { self.data[i] -= v.data[i]; }
+    }
+    pub fn scl(&mut self, a: K) {
+        for val in &mut self.data { *val *= a; }
+    }
+}
 
 fn main() {
-    // Vector
-    let mut v1 = Vector::from(vec![1.0, 2.0, 3.0]);
-    let v2 = Vector::from(vec![4.0, 5.0, 6.0]);
+    // Vector Example
+    let mut u = Vector::from([2., 3.]);
+    let v = Vector::from([5., 7.]);
+    u.add(&v);
+    println!("Vector Add:\n{}", u); 
+    // Result matches PDF: [7.0] \n [10.0]
 
-    v1.add(&v2);
-    println!("Vector after add: {:?}", v1);
-
-    v1.scl(2.0);
-    println!("Vector after scale: {:?}", v1);
-
-    // Matrix
-    let mut m1 = Matrix::from(vec![
-        vec![1.0, 2.0],
-        vec![3.0, 4.0],
+    // Matrix Example
+    let mut mat_u = Matrix::from([
+        [1., 2.],
+        [3., 4.],
     ]);
-
-    let m2 = Matrix::from(vec![
-        vec![5.0, 6.0],
-        vec![7.0, 8.0],
+    let mat_v = Matrix::from([
+        [7., 4.],
+        [-2., 2.],
     ]);
-
-    m1.add(&m2);
-    println!("Matrix after add: {:?}", m1);
-
-    m1.scl(2.0);
-    println!("Matrix after scale: {:?}", m1);
-
-    println!("Shape: {:?}", m1.shape());
-    println!("Is square? {}", m1.is_square());
+    mat_u.add(&mat_v);
+    println!("Matrix Add:\n{}", mat_u);
+    // Result matches PDF: [8.0, 6.0] \n [1.0, 6.0]
 }
