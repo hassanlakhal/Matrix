@@ -1,5 +1,5 @@
 use std::ops::{AddAssign, SubAssign, MulAssign, Mul, Add, Neg};
-use std::cmp::{PartialOrd , Ord};
+use std::cmp::{PartialOrd};
 
 #[derive(Debug, Clone)]
 struct Vector<K> {
@@ -14,17 +14,13 @@ impl<K> Vector<K> {
 }
 
 trait MathOps{
-    fn mul_add(self, a: Self, b: Self) -> Self;
     fn pow(self, exp: u32) -> Self;
     fn powf(self, exp: f32) -> Self;
-    fn max(self) -> Self; 
+    fn max(self, v: Self) -> Self; 
 }
 
 impl MathOps for f32 {
-    fn mul_add(self, a: Self, b: Self) -> Self {
-        f32::mul_add(self, a, b)
-    }
-
+    
     fn pow(self, exp: u32) -> Self {
         f32::powf(self, exp as f32) as f32
     }
@@ -33,8 +29,8 @@ impl MathOps for f32 {
         f32::powf(self, exp as f32) as f32
     }
 
-    fn max(self) -> Self {
-        self.into_iter().max()
+    fn max(self, v: Self) -> Self {
+        self.max(v)
     }
 }
 
@@ -79,16 +75,19 @@ where K: Copy + AddAssign + SubAssign + MulAssign + PartialOrd
         K : Add<Output = K> + Mul<Output = K> + Neg<Output = K> + MathOps + Default 
     {
         let mut vec = self.data.clone();
-        let mut res = K::default();
         let abs = K::default();
-        for i in 0..self.size(){
+
+        if vec[0] < abs{
+            vec[0] = -vec[0];
+        }
+        let mut val_max = vec[0];
+        for i in 1..self.size(){
             if vec[i] < abs {
                 vec[i] = -vec[i];
             }
-            // res = vec[i].max(vec[i + 1]);
+            val_max = val_max.max(vec[i]);
         }
-        vec.into_iter().max();
-        res
+        val_max
     }
 }
 
