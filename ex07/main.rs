@@ -87,11 +87,40 @@ impl<K: KField> Matrix<K> {
 
         result
     }
-    fn mul_mat(&mut self, mat: Matrix<K>) -> Matrix<K>{
 
-        
+    fn mul_mat(&self, mat: &Matrix<K>) -> Matrix<K> {
+
+        if self.cols != mat.rows {
+            panic!("Matrix dimensions do not match");
+        }
+
+        let mut result = vec![K::default(); self.rows * mat.cols];
+
+        for r in 0..self.rows {
+            for c in 0..mat.cols {
+
+                let mut sum = K::default();
+
+                for k in 0..self.cols {
+                    let a = self.data[k * self.rows + r];
+
+                    let b = mat.data[c * mat.rows + k];
+
+                    sum = sum + a * b;
+                }
+
+                result[c * self.rows + r] = sum;
+            }
+        }
+
+        Matrix {
+            data: result,
+            rows: self.rows,
+            cols: mat.cols,
+        }
     }
 }
+
 
 fn main() {
     let u = Matrix::from([
@@ -118,37 +147,37 @@ fn main() {
     println!("{}", u.mul_vec(&v));
     // [4.]
     // [-4.]
-    // let u = Matrix::from([
-    // [1., 0.],
-    // [0., 1.],
-    // ]);
-    // let v = Matrix::from([
-    // [1., 0.],
-    // [0., 1.],
-    // ]);
-    // println!("{}", u.mul_mat(&v));
-    // // [1., 0.]
-    // // [0., 1.]
-    // let u = Matrix::from([
-    // [1., 0.],
-    // [0., 1.],
-    // ]);
-    // let v = Matrix::from([
-    // [2., 1.],
-    // [4., 2.],
-    // ]);
-    // println!("{}", u.mul_mat(&v));
-    // // [2., 1.]
-    // // [4., 2.]
-    // let u = Matrix::from([
-    // [3., -5.],
-    // [6., 8.],
-    // ]);
-    // let v = Matrix::from([
-    // [2., 1.],
-    // [4., 2.],
-    // ]);
-    // println!("{}", u.mul_mat(&v));
-    // // [-14., -7.]
-    // // [44., 22.]
+    let u = Matrix::from([
+    [1., 0.],
+    [0., 1.],
+    ]);
+    let v = Matrix::from([
+    [1., 0.],
+    [0., 1.],
+    ]);
+    println!("{}", u.mul_mat(&v));
+    // [1., 0.]
+    // [0., 1.]
+    let u = Matrix::from([
+    [1., 0.],
+    [0., 1.],
+    ]);
+    let v = Matrix::from([
+    [2., 1.],
+    [4., 2.],
+    ]);
+    println!("{}", u.mul_mat(&v));
+    // [2., 1.]
+    // [4., 2.]
+    let u = Matrix::from([
+    [3., -5.],
+    [6., 8.],
+    ]);
+    let v = Matrix::from([
+    [2., 1.],
+    [4., 2.],
+    ]);
+    println!("{}", u.mul_mat(&v));
+    // [-14., -7.]
+    // [44., 22.]
 }
