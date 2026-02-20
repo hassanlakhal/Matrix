@@ -87,7 +87,6 @@ fn main() {
     let v = Vector::from([5., 7.]);
     u.add(&v);
     println!("Vector Add:\n{}", u); 
-    // Result matches PDF: [7.0] \n [10.0]
 
     // Matrix Example
     let mut mat_u = Matrix::from([
@@ -100,5 +99,4 @@ fn main() {
     ]);
     mat_u.add(&mat_v);
     println!("Matrix Add:\n{}", mat_u);
-    // Result matches PDF: [8.0, 6.0] \n [1.0, 6.0]
 }
