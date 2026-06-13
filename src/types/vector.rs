@@ -24,17 +24,24 @@ impl<K: Field> Vector<K>{
             self.size(), other.size()
         );
     }
+
     pub fn add(&mut self, v: Vector<K>){
         for i in 0..self.data.len(){
             self.data[i] += v.data[i]
         }
     }
-    // fn sub(&mut self, v: &Vector<K>){
 
-    // }
-    // fn scl(&mut self, a: K){
-
-    // }
+    pub fn sub(&mut self, v: Vector<K>){
+        for i in 0..self.data.len(){
+            self.data[i] -= v.data[i]
+        }
+    }
+    
+    pub fn scl(&mut self, a: K){
+        for i in 0..self.data.len(){
+            self.data[i] *= a
+        }
+    }
 }
 
 impl<K: Field> fmt::Display for Vector<K> {

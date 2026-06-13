@@ -6,7 +6,6 @@ pub struct Matrix<K: Field>{
     pub data: Vec<Vec<K>>,
     pub rows: usize,
     pub cols: usize
-
 }
 
 impl<K: Field> Matrix<K>{
