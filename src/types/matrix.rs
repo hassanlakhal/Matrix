@@ -9,16 +9,21 @@ pub struct Matrix<K: Field>{
 }
 
 impl<K: Field> Matrix<K>{
-    pub fn form(data: Vec<Vec<K>>) -> Self{
-        let rows = data.len();
-        let cols = if rows == 0 {0} else {data[0].len()};
 
-        assert!(
-            data.iter().all(|r| r.len() == cols),
-            "All rows must have the same number of columns"
-        );
-
-        Self{ data ,rows , cols}
+    pub fn from<I, V>(data: I) -> Self 
+    where
+        I: Into<Vec<V>>, 
+        V: Into<Vec<K>>,
+    {
+        let converted: Vec<Vec<K>> = data
+            .into()                     
+            .into_iter()                 
+            .map(|row| row.into())        
+            .collect();                   
+        let rows = converted.len();
+        let cols = if rows == 0 {0} else {converted[0].len()};
+        Matrix { data: converted , rows, cols}
+    
     }
 
     pub fn shape(&self) -> (usize, usize){
@@ -44,6 +49,21 @@ impl<K: Field> Matrix<K>{
             self.shape(), other.shape()
         );
     }
+
+    pub fn add(&mut self, v: Matrix<K>){
+        
+        for i in 0..self.rows {
+            for j in 0..self.cols{
+                self.set(i,j, self.data[i][j] + v.data[i][j]);
+            }
+        }
+    }
+    // pub fn sub(&mut self, v: Matrix<K>){
+
+    // }
+    // pub fn scl(&mut self, a: K){
+
+    // }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
