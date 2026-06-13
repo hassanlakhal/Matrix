@@ -1,4 +1,4 @@
-// use std::fmt;
+use std::fmt;
 use super::field::Field;
 
 
@@ -9,7 +9,7 @@ pub struct Vector<K : Field>{
 }
 
 impl<K: Field> Vector<K>{
-    pub fn form(data:impl Into<Vec<K>>) -> Self{
+    pub fn from(data:impl Into<Vec<K>>) -> Self{
     
         Self { data: data.into()}
     }
@@ -23,5 +23,25 @@ impl<K: Field> Vector<K>{
             "Vector size mismatch: {} vs {}",
             self.size(), other.size()
         );
+    }
+    pub fn add(&mut self, v: Vector<K>){
+        for i in 0..self.data.len(){
+            self.data[i] += v.data[i]
+        }
+    }
+    // fn sub(&mut self, v: &Vector<K>){
+
+    // }
+    // fn scl(&mut self, a: K){
+
+    // }
+}
+
+impl<K: Field> fmt::Display for Vector<K> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for val in &self.data {
+            writeln!(f, "[{}]", val)?;
+        }
+        Ok(())
     }
 }

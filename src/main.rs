@@ -1,8 +1,8 @@
 use matrix::{Vector, Matrix};
 
 fn main(){
-    let new_vector = Vector::form(vec![1.0,1.5]);
-    let new_matrix = Matrix::form(vec![vec![1.0,0.0,0.2], vec![1.0,1.2,5.0]]);
-    println!("Vector: {:?}",new_vector.data.get(1));
-    println!("Matrix: {:?}",new_matrix.get(0,2));
+    let mut u = Vector::from(vec![2.0, 3.0]);
+    let v = Vector::from(vec![5.0, 7.0]);
+    u.add(v);
+    println!("{}", u);
 }
