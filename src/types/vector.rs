@@ -46,7 +46,7 @@ impl<K: Field> Vector<K>{
 
 pub fn linear_combination<K : Field>(u: &[Vector<K>], coefs: &[K]) -> Vector<K>{
     let mut reusult = Vector::from(vec![K::zero(); u[0].data.len()]);
-    
+
     for i in 0..u.len(){
         let mut scl_vectot = u[i].clone();
         scl_vectot.scl(coefs[i]);
@@ -55,6 +55,8 @@ pub fn linear_combination<K : Field>(u: &[Vector<K>], coefs: &[K]) -> Vector<K>{
 
     reusult
 }
+
+
 
 impl<K: Field> fmt::Display for Vector<K> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
