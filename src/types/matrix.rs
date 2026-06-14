@@ -58,12 +58,20 @@ impl<K: Field> Matrix<K>{
             }
         }
     }
-    // pub fn sub(&mut self, v: Matrix<K>){
-
-    // }
-    // pub fn scl(&mut self, a: K){
-
-    // }
+    pub fn sub(&mut self, v: Matrix<K>){
+        for i in 0..self.rows {
+            for j in 0..self.cols{
+                self.set(i,j, self.data[i][j] - v.data[i][j]);
+            }
+        }
+    }
+    pub fn scl(&mut self, a: K){
+        for i in 0..self.rows {
+            for j in 0..self.cols{
+                self.set(i,j, self.data[i][j] * a);
+            }
+        }
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
