@@ -6,3 +6,4 @@ pub mod field;
 pub use vector::Vector;
 pub use matrix::Matrix;
 pub use field::Field;
+pub use vector::linear_combination;
