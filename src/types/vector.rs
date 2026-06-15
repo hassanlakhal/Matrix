@@ -42,7 +42,7 @@ impl<K: Field> Vector<K>{
             self.data[i] *= a
         }
     }
-    
+
     pub fn dot(&mut self, v: Vector::<K>) -> K{
         let mut result = K::zero();
 
@@ -50,6 +50,46 @@ impl<K: Field> Vector<K>{
             result += self.data[i] * v.data[i]; 
         }
 
+        result
+    }
+    
+    pub fn norm_1(&self) -> f32
+    where 
+        K: Into<f32>
+    {
+        let mut result = 0.0f32;
+        for i in 0..self.data.len(){
+
+            let val_f32: f32 = self.data[i].into(); 
+            result += val_f32.abs();
+        }
+        result
+    }
+
+    pub fn norm(&self) -> f32
+        where 
+        K: Into<f32>
+    {
+        let mut result = 0.0f32;
+        for i in 0..self.data.len(){
+
+            let val_f32: f32 = self.data[i].into(); 
+            result += val_f32.powf(2.0);
+        }
+        result.powf(0.5)
+    }
+
+    pub fn norm_inf(&self) -> f32
+    where 
+        K: Into<f32>
+    {
+        let mut result = 0.0f32;
+        for i in 0..self.data.len(){
+
+            let val_f32: f32 = self.data[i].into();
+            let abs_val = val_f32.abs(); 
+            result = abs_val.max(result);
+        }
         result
     }
 }

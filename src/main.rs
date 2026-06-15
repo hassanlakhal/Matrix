@@ -76,7 +76,7 @@ fn main(){
     10.], [30., 40.]]), 0.5));
     // [[11., 5.5]
     // [16.5, 22.]]
-    
+
     let mut u = Vector::from([0., 0.]);
     let v = Vector::from([1., 1.]);
     println!("{}", u.dot(v));
@@ -89,4 +89,17 @@ fn main(){
     let v = Vector::from([3., 2.]);
     println!("{}", u.dot(v));
     // 9.0
+
+    let u = Vector::from([0., 0., 0.]);
+    println!("{}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    // 0.0, 0.0, 0.0
+    // println!("{}",u.norm_1());
+    let u = Vector::from([1., 2., 3.]);
+    println!("{}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    // println!("{}",u.norm_1());
+    // 6.0, 3.74165738, 3.0
+    let u = Vector::from([-1., -2.]);
+    println!("{}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
+    // println!("{}",u.norm_1());
+    // 3.0, 2.236067977, 2.0
 }
