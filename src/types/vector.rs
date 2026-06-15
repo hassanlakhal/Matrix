@@ -42,6 +42,16 @@ impl<K: Field> Vector<K>{
             self.data[i] *= a
         }
     }
+    
+    pub fn dot(&mut self, v: Vector::<K>) -> K{
+        let mut result = K::zero();
+
+        for i in 0..self.data.len(){
+            result += self.data[i] * v.data[i]; 
+        }
+
+        result
+    }
 }
 
 pub fn linear_combination<K : Field>(u: &[Vector<K>], coefs: &[K]) -> Vector<K>{
