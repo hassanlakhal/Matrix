@@ -1,4 +1,4 @@
-use matrix::{Vector, Matrix, linear_combination, lerp};
+use matrix::{Vector, Matrix, linear_combination, lerp, angle_cos};
 
 fn main(){
     let mut u = Vector::from([2.0, 3.0]);
@@ -77,15 +77,15 @@ fn main(){
     // [[11., 5.5]
     // [16.5, 22.]]
 
-    let mut u = Vector::from([0., 0.]);
+    let  u = Vector::from([0., 0.]);
     let v = Vector::from([1., 1.]);
     println!("{}", u.dot(v));
     // 0.0
-    let mut u = Vector::from([1., 1.]);
+    let u = Vector::from([1., 1.]);
     let v = Vector::from([1., 1.]);
     println!("{}", u.dot(v));
     // 2.0
-    let mut u = Vector::from([-1., 6.]);
+    let u = Vector::from([-1., 6.]);
     let v = Vector::from([3., 2.]);
     println!("{}", u.dot(v));
     // 9.0
@@ -102,4 +102,26 @@ fn main(){
     println!("{}, {}, {}", u.norm_1(), u.norm(), u.norm_inf());
     // println!("{}",u.norm_1());
     // 3.0, 2.236067977, 2.0
+
+
+    let u = Vector::from([1., 0.]);
+    let v = Vector::from([1., 0.]);
+    println!("{}", angle_cos(&u, &v));
+    // 1.0
+    let u = Vector::from([1., 0.]);
+    let v = Vector::from([0., 1.]);
+    println!("{}", angle_cos(&u, &v));
+    // 0.0
+    let u = Vector::from([-1., 1.]);
+    let v = Vector::from([ 1., -1.]);
+    println!("{}", angle_cos(&u, &v));
+    // -1.0
+    let u = Vector::from([2., 1.]);
+    let v = Vector::from([4., 2.]);
+    println!("{}", angle_cos(&u, &v));
+    // 1.0
+    let u = Vector::from([1., 2., 3.]);
+    let v = Vector::from([4., 5., 6.]);
+    println!("{}", angle_cos(&u, &v));
+    // 0.974631846
 }

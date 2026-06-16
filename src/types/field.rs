@@ -15,6 +15,7 @@ pub trait Field:
     + Default
     + PartialEq
     + Display
+    + Into<f32>
 {
     fn zero() -> Self;
     fn one() -> Self;
