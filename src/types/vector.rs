@@ -43,7 +43,7 @@ impl<K: Field> Vector<K>{
         }
     }
 
-    pub fn dot(&self, v: Vector::<K>) -> K{
+    pub fn dot(&self, v: Vector<K>) -> K{
         let mut result = K::zero();
 
         for i in 0..self.data.len(){
@@ -101,18 +101,11 @@ pub fn linear_combination<K : Field>(u: &[Vector<K>], coefs: &[K]) -> Vector<K>{
 }
 
 pub fn angle_cos<K: Field>(u: &Vector<K>, v: &Vector<K>) -> f32
-    where 
-            f32: From<K>
 {
-
-    let dot_product: K = u.dot(v.clone()); 
-    
-    let dot_val = f32::from(dot_product); 
-    
+    let dot: f32 = u.dot(v.clone()).into();
     let norm_u = u.norm();
     let norm_v = v.norm();
-
-    dot_val / (norm_u * norm_v)
+    dot / (norm_u * norm_v)
 }
 
 pub fn cross_product<K: Field>(u: &Vector<K>, v: &Vector<K>) -> Vector<K>{
