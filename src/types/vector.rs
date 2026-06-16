@@ -103,18 +103,27 @@ pub fn linear_combination<K : Field>(u: &[Vector<K>], coefs: &[K]) -> Vector<K>{
 pub fn angle_cos<K: Field>(u: &Vector<K>, v: &Vector<K>) -> f32
     where 
             f32: From<K>
-    {
+{
 
-        let dot_product: K = u.dot(v.clone()); 
-        
-        let dot_val = f32::from(dot_product); 
-        
-        let norm_u = u.norm();
-        let norm_v = v.norm();
+    let dot_product: K = u.dot(v.clone()); 
+    
+    let dot_val = f32::from(dot_product); 
+    
+    let norm_u = u.norm();
+    let norm_v = v.norm();
 
-        dot_val / (norm_u * norm_v)
-    }
+    dot_val / (norm_u * norm_v)
+}
 
+pub fn cross_product<K: Field>(u: &Vector<K>, v: &Vector<K>) -> Vector<K>{
+
+    let s1 = u.data[1].mul(v.data[2]).sub(u.data[2].mul(v.data[1]));
+    let s2 = u.data[2].mul(v.data[0]).sub(u.data[0].mul(v.data[2]));
+    let s3 = u.data[0].mul(v.data[1]).sub(u.data[1].mul(v.data[0]));
+    
+    Vector::from([s1,s2,s3])
+
+}
 
 impl<K: Field> fmt::Display for Vector<K> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
