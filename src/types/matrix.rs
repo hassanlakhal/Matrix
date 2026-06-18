@@ -90,8 +90,7 @@ impl<K: Field> Matrix<K>{
     }
 
     pub fn mul_mat(&self, other: Matrix<K>) -> Matrix<K> {
-        assert_eq!(self.cols, other.rows, "Error: Columns of A not equale Rows dyal of B!");
-
+        assert_eq!(self.cols, other.rows, "Error: The number of columns in A must equal the number of rows in B!");
         let mut result_data = vec![vec![K::zero(); other.cols]; self.rows];
 
         for i in 0..self.rows {         
