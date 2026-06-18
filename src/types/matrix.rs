@@ -1,5 +1,7 @@
 use super::field::Field;
 use std::fmt;
+use crate::Vector;
+
 #[derive(Debug, Clone, PartialEq)]
 
 pub struct Matrix<K: Field>{
@@ -72,6 +74,23 @@ impl<K: Field> Matrix<K>{
             }
         }
     }
+    pub fn mul_vec(&self, vec: Vector<K>) -> Vector<K> {
+        
+        let mut result_data = vec![K::zero(); self.rows];       
+        
+        for i in 0..self.rows {
+            let mut sum = K::zero();
+            for j in 0..self.cols { 
+                sum += self.data[i][j].clone() * vec.data[j].clone(); 
+            }
+            result_data[i] = sum;
+        }
+        
+        Vector::from(result_data)
+    }
+    // fn mul_mat(&mut self, mat: Matrix<K>) -> Matrix<K>{
+
+    // }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
