@@ -88,9 +88,26 @@ impl<K: Field> Matrix<K>{
         
         Vector::from(result_data)
     }
-    // fn mul_mat(&mut self, mat: Matrix<K>) -> Matrix<K>{
 
-    // }
+    pub fn mul_mat(&self, other: Matrix<K>) -> Matrix<K> {
+        assert_eq!(self.cols, other.rows, "Error: Columns of A not equale Rows dyal of B!");
+
+        let mut result_data = vec![vec![K::zero(); other.cols]; self.rows];
+
+        for i in 0..self.rows {         
+            for j in 0..other.cols {   
+                let mut sum = K::zero();
+                
+                for k in 0..self.cols { 
+                    sum += self.data[i][k].clone() * other.data[k][j].clone();
+                }
+
+                result_data[i][j] = sum;
+            }
+        }
+
+        Matrix::from(result_data)
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
