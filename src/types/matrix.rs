@@ -107,6 +107,16 @@ impl<K: Field> Matrix<K>{
 
         Matrix::from(result_data)
     }
+
+    pub fn trace(&self) -> K{
+
+        let mut sum = K::zero();
+        for i in 0..self.rows {
+            sum += self.data[i][i];
+        }
+        
+        sum
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
