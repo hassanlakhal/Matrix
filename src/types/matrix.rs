@@ -117,6 +117,16 @@ impl<K: Field> Matrix<K>{
         
         sum
     }
+    pub fn transpose(&self) -> Matrix<K>{
+        let mut result_data = vec![vec![K::zero(); self.rows]; self.cols];
+
+        for i in 0..self.rows{
+            for j in 0..self.cols{
+                result_data[j][i] = self.data[i][j].clone();
+            }
+        }
+        Matrix::from(result_data)
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {

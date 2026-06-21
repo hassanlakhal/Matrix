@@ -224,4 +224,10 @@ fn main(){
     ]);
     println!("{}", u.trace());
     // -21.0
+    // let u = Matrix::from([
+    // [1., 0.],
+    // [0., 1.],
+    // [0., -1.],
+    // ]);
+    println!("{}",u.transpose());
 }
