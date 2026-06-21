@@ -117,6 +117,7 @@ impl<K: Field> Matrix<K>{
         
         sum
     }
+
     pub fn transpose(&self) -> Matrix<K>{
         let mut result_data = vec![vec![K::zero(); self.rows]; self.cols];
 
@@ -126,6 +127,48 @@ impl<K: Field> Matrix<K>{
             }
         }
         Matrix::from(result_data)
+    }
+
+    pub fn row_echelon(&mut self) -> Matrix<K> {
+        let mut current_row = 0;
+
+        for i in 0..self.cols {
+            if current_row >= self.rows {
+                break;
+            }
+
+            let mut max_row = current_row;
+            for row in current_row + 1..self.rows {
+                if self.data[row][i].abs() > self.data[max_row][i].abs() {
+                    max_row = row;
+                }
+            }
+
+            if self.data[max_row][i] == K::zero() {
+                continue;
+            }
+
+            // if current_row != max_row {
+            //     self.data.swap(current_row, max_row);
+            // }
+
+            let pivot = self.data[current_row][i];
+            for j in i..self.data[current_row].len() {
+                self.data[current_row][j] = self.data[current_row][j] / pivot;
+            }
+
+            for row in current_row + 1..self.rows {
+                let factor = self.data[row][i];
+                for j in i..self.data[row].len() {
+                    let factor_value = factor * self.data[current_row][j];
+                    self.data[row][j] -= factor_value;
+                }
+            }
+
+            current_row += 1;
+        }
+
+        Matrix::from(self.data.clone())
     }
 }
 
