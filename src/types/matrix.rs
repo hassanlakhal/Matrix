@@ -233,6 +233,97 @@ impl<K: Field> Matrix<K>{
 
         det
     }
+
+    pub fn inverse(&mut self) -> Result<Matrix<K>, String> {
+        if self.rows != self.cols {
+            return Err("Matrix must be square".to_string());
+        }
+
+        let n = self.rows;
+
+        // Create augmented matrix [A | I]
+        let mut augmented = Vec::new();
+        for i in 0..n {
+            let mut row = self.data[i].clone();
+            
+            // Append identity matrix columns
+            for j in 0..n {
+                if i == j {
+                    row.push(K::one());
+                } else {
+                    row.push(K::zero());
+                }
+            }
+            augmented.push(row);
+        }
+        self.data = augmented;
+
+        // Forward elimination (make left side upper triangular)
+        for i in 0..n {
+            // Find pivot
+            let mut max_row = i;
+            for row in i + 1..n {
+                if self.data[row][i].abs() > self.data[max_row][i].abs() {
+                    max_row = row;
+                }
+            }
+
+            // Check for singularity here (after finding best pivot)
+            if self.data[max_row][i] == K::zero() {
+                return Err("Matrix is singular".to_string());
+            }
+
+            // Swap rows
+            if i != max_row {
+                for j in 0..2 * n {
+                    let temp = self.data[i][j];
+                    self.data[i][j] = self.data[max_row][j];
+                    self.data[max_row][j] = temp;
+                }
+            }
+
+            // Eliminate below
+            for row in i + 1..n {
+                let pivot = self.data[i][i];
+                let factor = self.data[row][i] / pivot;
+                
+                for j in i..2 * n {
+                    let pivot_value = self.data[i][j];
+                    self.data[row][j] -= factor * pivot_value;
+                }
+            }
+        }
+
+        // Back substitution (make left side identity)
+        for i in (0..n).rev() {
+            // Normalize pivot row to 1
+            let pivot = self.data[i][i];
+            for j in 0..2 * n {
+                self.data[i][j] = self.data[i][j] / pivot;
+            }
+
+            // Eliminate above
+            for row in 0..i {
+                let pivot_val = self.data[row][i];
+                for j in 0..2 * n {
+                    let pivot_value = self.data[i][j];
+                    self.data[row][j] -= pivot_val * pivot_value;
+                }
+            }
+        }
+
+    // Extract right half (the inverse)
+        let mut inverse_data = Vec::new();
+        for i in 0..n {
+            let mut inv_row = Vec::new();
+            for j in n..2 * n {
+                inv_row.push(self.data[i][j]);
+            }
+            inverse_data.push(inv_row);
+        }
+
+        Ok(Matrix::from(inverse_data))
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
