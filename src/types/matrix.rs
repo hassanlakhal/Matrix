@@ -148,9 +148,13 @@ impl<K: Field> Matrix<K>{
                 continue;
             }
 
-            // if current_row != max_row {
-            //     self.data.swap(current_row, max_row);
-            // }
+            if current_row != max_row {
+                for j in 0..self.data[current_row].len() {
+                    let temp = self.data[current_row][j];
+                    self.data[current_row][j] = self.data[max_row][j];
+                    self.data[max_row][j] = temp;
+                }
+            }
 
             let pivot = self.data[current_row][i];
             for j in i..self.data[current_row].len() {
@@ -158,10 +162,11 @@ impl<K: Field> Matrix<K>{
             }
 
             for row in current_row + 1..self.rows {
-                let factor = self.data[row][i];
+                let pivot = self.data[current_row][i];
+                let factor = self.data[row][i] / pivot;
                 for j in i..self.data[row].len() {
-                    let factor_value = factor * self.data[current_row][j];
-                    self.data[row][j] -= factor_value;
+                        let current_row_value = self.data[current_row][j];
+                        self.data[row][j] -= factor * current_row_value;
                 }
             }
 
@@ -169,6 +174,64 @@ impl<K: Field> Matrix<K>{
         }
 
         Matrix::from(self.data.clone())
+    }
+
+    pub fn determinant(&mut self) -> K {
+        if self.rows != self.cols {
+            panic!("Determinant only defined for square matrices");
+        }
+
+        let mut swap_count = 0;
+        let mut current_row = 0;
+        let n = self.rows;
+
+        for i in 0..self.cols {
+            if current_row >= self.rows {
+                break;
+            }
+
+            let mut max_row = current_row;
+            for row in current_row + 1..self.rows {
+                if self.data[row][i].abs() > self.data[max_row][i].abs() {
+                    max_row = row;
+                }
+            }
+
+            if self.data[max_row][i] == K::zero() {
+                return K::zero();
+            }
+
+            if current_row != max_row {
+                for j in 0..self.data[current_row].len() {
+                    let temp = self.data[current_row][j];
+                    self.data[current_row][j] = self.data[max_row][j];
+                    self.data[max_row][j] = temp;
+                }
+                swap_count += 1;
+            }
+
+            for row in current_row + 1..self.rows {
+                let pivot = self.data[current_row][i];
+                let factor = self.data[row][i] / pivot;
+                for j in i..self.data[row].len() {
+                        let current_row_value = self.data[current_row][j];
+                        self.data[row][j] -= factor * current_row_value;
+                }
+            }
+
+            current_row += 1;
+        }
+
+        let mut det = K::one();
+        for i in 0..n {
+            det = det * self.data[i][i];
+        }
+
+        if swap_count % 2 == 1 {
+            det = -det;
+        }
+
+        det
     }
 }
 
