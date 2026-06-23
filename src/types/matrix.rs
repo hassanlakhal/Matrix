@@ -313,6 +313,25 @@ impl<K: Field> Matrix<K>{
 
         Ok(Matrix::from(inverse_data))
     }
+    pub fn rank(&mut self) -> usize{
+        self.row_echelon();
+        let mut rank: usize = 0;
+    
+        for i in 0..self.rows {
+            let mut is_non_zero_row = false;
+            for j in 0..self.cols {
+                if self.data[i][j] != K::zero() {
+                    is_non_zero_row = true;
+                    break;
+                }
+            }
+            
+            if is_non_zero_row {
+                rank += 1;
+            }
+        }
+        rank
+    }
 }
 
 impl<K: Field> fmt::Display for Matrix<K> {
