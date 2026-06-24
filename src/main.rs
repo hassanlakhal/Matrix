@@ -1,4 +1,4 @@
-use matrix::{Vector, Matrix, linear_combination, lerp, angle_cos, cross_product};
+use matrix::{Vector, Matrix, linear_combination, lerp, angle_cos, cross_product, projection};
 
 fn main(){
     let mut u = Vector::from([2.0, 3.0]);
@@ -355,4 +355,11 @@ fn main(){
     ]);
     println!("{}", u.rank());
     // 3
+    let p = projection(
+        std::f32::consts::FRAC_PI_4,  // 45° f radians
+        16.0 / 9.0,                    // ratio
+        0.1,                           // near
+        100.0,                         // far
+    );
+    println!("{}", p);
 }

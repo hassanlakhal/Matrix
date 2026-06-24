@@ -10,4 +10,5 @@ pub use field::Field;
 pub use vector::linear_combination;
 pub use vector::angle_cos;
 pub use vector::cross_product;
+pub use matrix::projection;
 pub use lerp::lerp;

@@ -5,4 +5,5 @@ pub use types::Matrix;
 pub use types::linear_combination;
 pub use types::angle_cos;
 pub use types::cross_product;
+pub use types::projection;
 pub use types::lerp;

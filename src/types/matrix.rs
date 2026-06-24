@@ -334,6 +334,18 @@ impl<K: Field> Matrix<K>{
     }
 }
 
+pub fn projection(fov: f32, ratio: f32, near: f32, far: f32) -> Matrix<f32>{
+
+    let f = 1.0 / (fov / 2.0).tan();
+    
+    Matrix::from(vec![
+        vec![f / ratio, 0.0, 0.0,                       0.0],
+        vec![0.0,       f,   0.0,                       0.0],
+        vec![0.0,       0.0, far / (near - far),       -1.0],
+        vec![0.0,       0.0, (near * far) / (near - far), 0.0],
+    ])
+}
+
 impl<K: Field> fmt::Display for Matrix<K> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for row in &self.data {
