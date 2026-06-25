@@ -358,8 +358,9 @@ fn main(){
     let p = projection(
         std::f32::consts::FRAC_PI_4,  // 45° f radians
         16.0 / 9.0,                    // ratio
-        0.1,                           // near
+        2.0,                           // near
         100.0,                         // far
     );
-    println!("{}", p);
+    println!("{}",p.transpose());
+    // println!("{}", p);
 }
