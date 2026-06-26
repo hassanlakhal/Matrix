@@ -11,7 +11,7 @@ pub struct Matrix<K: Field>{
     pub cols: usize
 }
 
-impl<K: Field + PartialOrd> Matrix<K>{
+impl<K: Field> Matrix<K>{
 
     pub fn from<I, V>(data: I) -> Self 
     where
@@ -130,6 +130,10 @@ impl<K: Field + PartialOrd> Matrix<K>{
         Matrix::from(result_data)
     }
 
+    
+}
+
+impl <K: Field + PartialOrd> Matrix<K>{
     pub fn row_echelon(&mut self) -> Matrix<K> {
         let mut current_row = 0;
 

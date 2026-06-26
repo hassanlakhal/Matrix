@@ -377,8 +377,8 @@ fn main(){
     println!("{}", u);
     // [6+8i]
     // [10+12i]
-    
-    let mut u = Vector::from(vec![
+
+    let  u = Vector::from(vec![
     Complex::from(1.0, 2.0),
     Complex::from(3.0, 4.0),
     ]);
@@ -388,4 +388,12 @@ fn main(){
     ]);
     let dot = u.dot(v);
     println!("dot = {}", dot);
+
+    let v = Matrix::from([
+        [Complex::from(5.0, 6.0)],
+        [Complex::from(7.0, 8.0)],
+    ]);
+    println!("transpose {}", v.transpose());
+
+
 }
