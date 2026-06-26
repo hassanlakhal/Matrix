@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign};
 use std::fmt::Display;
-use std::cmp::PartialOrd;
+
 
 pub trait Field:
     Add<Output = Self>
@@ -17,7 +17,7 @@ pub trait Field:
     + PartialEq
     + Display
     + Into<f32>
-    + PartialOrd
+    
 {
     fn zero() -> Self;
     fn one() -> Self;

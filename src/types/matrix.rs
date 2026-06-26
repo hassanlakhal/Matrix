@@ -1,6 +1,7 @@
 use super::field::Field;
 use std::fmt;
 use crate::Vector;
+use std::cmp::PartialOrd;
 
 #[derive(Debug, Clone, PartialEq)]
 
@@ -10,7 +11,7 @@ pub struct Matrix<K: Field>{
     pub cols: usize
 }
 
-impl<K: Field> Matrix<K>{
+impl<K: Field + PartialOrd> Matrix<K>{
 
     pub fn from<I, V>(data: I) -> Self 
     where

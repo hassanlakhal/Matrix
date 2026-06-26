@@ -2,7 +2,7 @@ pub mod vector;
 pub mod matrix;
 pub mod field;
 pub mod lerp;
-
+pub mod complex;
 
 pub use vector::Vector;
 pub use matrix::Matrix;
@@ -12,3 +12,4 @@ pub use vector::angle_cos;
 pub use vector::cross_product;
 pub use matrix::projection;
 pub use lerp::lerp;
+pub use complex::Complex;

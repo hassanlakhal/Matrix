@@ -12,7 +12,7 @@ impl Lerp for f32{
     }
 }
 
-impl<K: Field + std::convert::From<f32>> Lerp for Matrix<K>{
+impl<K: Field + std::convert::From<f32> + PartialOrd> Lerp for Matrix<K>{
     fn lerp(u: Self, mut v: Self, t: f32) -> Self{
 
         let t_generic: K = t.into();

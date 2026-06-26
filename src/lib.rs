@@ -7,3 +7,4 @@ pub use types::angle_cos;
 pub use types::cross_product;
 pub use types::projection;
 pub use types::lerp;
+pub use types::Complex;

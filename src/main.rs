@@ -1,4 +1,4 @@
-use matrix::{Vector, Matrix, linear_combination, lerp, angle_cos, cross_product, projection};
+use matrix::{Vector, Matrix, Complex,linear_combination, lerp, angle_cos, cross_product, projection};
 
 fn main(){
     let mut u = Vector::from([2.0, 3.0]);
@@ -363,4 +363,29 @@ fn main(){
     );
     println!("{}",p.transpose());
     // println!("{}", p);
+
+    let mut u = Vector::from(vec![
+    Complex::from(1.0, 2.0),
+    Complex::from(3.0, 4.0),
+    ]);
+    let v = Vector::from(vec![
+        Complex::from(5.0, 6.0),
+        Complex::from(7.0, 8.0),
+    ]);
+
+    u.add(v);
+    println!("{}", u);
+    // [6+8i]
+    // [10+12i]
+    
+    let mut u = Vector::from(vec![
+    Complex::from(1.0, 2.0),
+    Complex::from(3.0, 4.0),
+    ]);
+    let v = Vector::from(vec![
+        Complex::from(5.0, 6.0),
+        Complex::from(7.0, 8.0),
+    ]);
+    let dot = u.dot(v);
+    println!("dot = {}", dot);
 }
